@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HouzME</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #EEF2FF;
+            --green: #10B981;
+            --red: #EF4444;
+            --bg: #F3F4F6;
+            --white: #FFFFFF;
+            --text: #111827;
+            --muted: #6B7280;
+            --border: #E5E7EB;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---- SCREENS ---- */
+        .screen { display: none; flex-direction: column; min-height: 100vh; }
+        .screen.active { display: flex; }
+
+        /* ---- HEADER ---- */
+        .app-header {
+            background: var(--white);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 22px; font-weight: 900; color: var(--primary); letter-spacing: -0.5px; }
+        .logo span { color: var(--green); }
+        .header-sub { font-size: 13px; color: var(--muted); }
+
+        /* ---- BOTTOM NAV ---- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding: 6px 0 env(safe-area-inset-bottom, 6px);
+            z-index: 100;
+        }
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 4px;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+            border: none;
+            background: none;
+            transition: color 0.2s;
+        }
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn svg { width: 22px; height: 22px; stroke-width: 2; }
+
+        /* ---- AUTH ---- */
+        .auth-wrap {
+            flex: 1;
+            padding: 40px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            overflow-y: auto;
+        }
+        .auth-brand { text-align: center; margin-bottom: 4px; }
+        .auth-brand h1 { font-size: 42px; font-weight: 900; color: var(--primary); }
+        .auth-brand h1 span { color: var(--green); }
+        .auth-brand p { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 13px; font-weight: 600; color: var(--text); }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 13px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            background: var(--white);
+            width: 100%;
+            transition: border-color 0.2s;
+            color: var(--text);
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { border-color: var(--primary); }
+        .form-group textarea { min-height: 90px; resize: vertical; }
+
+        .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .role-option {
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .role-option.active { border-color: var(--primary); background: var(--primary-light); }
+        .role-icon { font-size: 30px; margin-bottom: 8px; }
+        .role-label { font-size: 14px; font-weight: 700; }
+        .role-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+        .divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .link-text { color: var(--primary); font-weight: 600; cursor: pointer; text-align: center; font-size: 14px; }
+
+        /* ---- BUTTONS ---- */
+        .btn {
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            transition: transform 0.15s, opacity 0.15s;
+            display: block;
+            width: 100%;
+        }
+        .btn:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-green { background: var(--green); color: white; }
+        .btn-sm { padding: 9px 16px; font-size: 13px; border-radius: 10px; width: auto; display: inline-block; }
+        .btn-ghost { background: var(--bg); color: var(--text); }
+
+        /* ---- CONTENT AREA ---- */
+        .content { padding: 20px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px; overflow-y: auto; flex: 1; }
+        .section-head { display: flex; justify-content: space-between; align-items: center; }
+        .section-title { font-size: 20px; font-weight: 800; }
+
+        /* ---- PROPERTY CARD (landlord list) ---- */
+        .prop-card { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+        .prop-card img { width: 100%; height: 170px; object-fit: cover; display: block; }
+        .prop-body { padding: 16px; }
+        .prop-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .prop-price { font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+        .prop-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .tag { background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .card-actions { display: flex; gap: 8px; }
+
+        /* ---- SWIPE AREA ---- */
+        .swipe-screen { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 16px 16px 0; padding-bottom: 90px; overflow: hidden; }
+        .card-stack { position: relative; width: 100%; height: 460px; margin-bottom: 20px; flex-shrink: 0; }
+
+        .swipe-card {
+            position: absolute;
+            inset: 0;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            cursor: grab;
+            user-select: none;
+            transform-origin: center 80%;
+        }
+        .swipe-card:active { cursor: grabbing; }
+        .swipe-card img { width: 100%; height: 62%; object-fit: cover; display: block; pointer-events: none; }
+        .swipe-info { padding: 16px; }
+        .swipe-title { font-size: 17px; font-weight: 800; }
+        .swipe-price { font-size: 22px; font-weight: 900; color: var(--primary); margin: 4px 0 8px; }
+        .swipe-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+        .stamp {
+            position: absolute;
+            top: 24px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 26px;
+            font-weight: 900;
+            opacity: 0;
+            pointer-events: none;
+            border-width: 3px;
+            border-style: solid;
+            transform: rotate(-15deg);
+        }
+        .stamp.like { right: 20px; color: var(--green); border-color: var(--green); transform: rotate(15deg); }
+        .stamp.nope { left: 20px; color: var(--red); border-color: var(--red); transform: rotate(-15deg); }
+
+        .swipe-btns { display: flex; gap: 20px; justify-content: center; }
+        .swipe-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        .swipe-btn:active { transform: scale(0.88); }
+        .swipe-btn.nope { color: var(--red); }
+        .swipe-btn.info { color: var(--primary); }
+        .swipe-btn.like { color: var(--green); }
+
+        /* ---- LIKED LIST ---- */
+        .liked-item { background: white; border-radius: 14px; display: flex; overflow: hidden; box-shadow: var(--shadow); }
+        .liked-item img { width: 96px; height: 96px; object-fit: cover; flex-shrink: 0; }
+        .liked-body { padding: 12px; flex: 1; min-width: 0; }
+        .liked-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .liked-price { font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+
+        /* ---- PROFILE ---- */
+        .profile-hero { background: var(--primary); padding: 40px 24px 28px; color: white; text-align: center; }
+        .avatar { width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 12px; }
+        .profile-name { font-size: 22px; font-weight: 800; }
+        .profile-role-label { font-size: 13px; opacity: 0.75; margin-top: 4px; }
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px; }
+        .stat { background: white; border-radius: 12px; padding: 14px 8px; text-align: center; box-shadow: var(--shadow); }
+        .stat-n { font-size: 24px; font-weight: 900; color: var(--primary); }
+        .stat-l { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+        /* ---- EMPTY STATE ---- */
+        .empty { text-align: center; padding: 48px 24px; color: var(--muted); }
+        .empty-icon { font-size: 56px; margin-bottom: 14px; }
+        .empty h3 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .empty p { font-size: 14px; line-height: 1.5; }
+
+        /* ---- MODAL ---- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .overlay.open { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+        }
+        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
+        .modal-row { display: flex; gap: 10px; margin-top: 16px; }
+        .modal-row .btn { flex: 1; }
+
+        /* ---- TOAST ---- */
+        .toast {
+            position: fixed;
+            bottom: 92px;
+            left: 50%;
+            transform: translateX(-50%) translateY(16px);
+            background: #1F2937;
+            color: white;
+            padding: 11px 22px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.28s ease;
+            z-index: 999;
+            white-space: nowrap;
+            max-width: 88vw;
+            text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===================================================
+     SCREEN: Login
+=================================================== -->
+<div class="screen active" id="s-login">
+    <div class="auth-wrap">
+        <div class="auth-brand">
+            <h1>Houz<span>ME</span></h1>
+            <p>Find your perfect student home</p>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="l-email" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" onclick="login()">Sign In</button>
+        <div class="divider">or</div>
+        <button class="btn btn-outline" onclick="go('s-signup')">Create Account</button>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            <p class="link-text" onclick="demoLogin('landlord')">🏠 Demo — Sign in as Landlord</p>
+            <p class="link-text" onclick="demoLogin('student')">🎓 Demo — Sign in as Student</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===================================================
+     SCREEN: Sign Up
+=================================================== -->
+<div class="screen" id="s-signup">
+    <div class="auth-wrap">
+        <div class="auth-brand">
+            <h1>Houz<span>ME</span></h1>
+            <p>Create your account</p>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="su-name" placeholder="e.g. Sarah Jones">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="su-email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="su-pass" placeholder="At least 6 characters">
+        </div>
+        <div class="form-group">
+            <label>I am a…</label>
+            <div class="role-grid">
+                <div class="role-option active" id="r-landlord" onclick="pickRole('landlord')">
+                    <div class="role-icon">🏠</div>
+                    <div class="role-label">Landlord</div>
+                    <div class="role-sub">List properties</div>
+                </div>
+                <div class="role-option" id="r-student" onclick="pickRole('student')">
+                    <div class="role-icon">🎓</div>
+                    <div class="role-label">Student</div>
+                    <div class="role-sub">Find a place</div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="signup()">Create Account</button>
+        <p class="link-text" onclick="go('s-login')">Already have an account? Sign in</p>
+    </div>
+</div>
+
+<!-- ===================================================
+     SCREEN: Landlord
+=================================================== -->
+<div class="screen" id="s-landlord">
+    <div class="app-header">
+        <span class="logo">Houz<span>ME</span></span>
+        <span class="header-sub" id="l-greet"></span>
+    </div>
+    <div id="l-body" style="flex:1;display:flex;flex-direction:column;overflow:hidden;"></div>
+    <nav class="bottom-nav">
+        <button class="nav-btn active" id="ln-props" onclick="lNav('props',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Properties
+        </button>
+        <button class="nav-btn" id="ln-profile" onclick="lNav('profile',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </button>
+    </nav>
+</div>
+
+<!-- ===================================================
+     SCREEN: Student
+=================================================== -->
+<div class="screen" id="s-student">
+    <div class="app-header">
+        <span class="logo">Houz<span>ME</span></span>
+        <span class="header-sub" id="s-greet"></span>
+    </div>
+    <div id="s-body" style="flex:1;display:flex;flex-direction:column;overflow:hidden;"></div>
+    <nav class="bottom-nav">
+        <button class="nav-btn active" id="sn-disc" onclick="sNav('disc',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Discover
+        </button>
+        <button class="nav-btn" id="sn-liked" onclick="sNav('liked',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            Liked
+        </button>
+        <button class="nav-btn" id="sn-profile" onclick="sNav('profile',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </button>
+    </nav>
+</div>
+
+<!-- ===================================================
+     MODAL: Add / Edit Property
+=================================================== -->
+<div class="overlay" id="m-house">
+    <div class="modal">
+        <h2 class="modal-title" id="m-house-title">Add Property</h2>
+        <input type="hidden" id="m-id">
+        <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="form-group">
+                <label>Address / Property Name</label>
+                <input type="text" id="m-addr" placeholder="e.g. 14 Oak Street, Manchester">
+            </div>
+            <div class="form-group">
+                <label>Monthly Rent (£)</label>
+                <input type="number" id="m-price" placeholder="e.g. 650" min="1">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="m-desc" placeholder="Describe the property…"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image URL <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+                <input type="url" id="m-img" placeholder="https://…">
+            </div>
+            <div class="form-group">
+                <label>Amenities <span style="color:var(--muted);font-weight:400">(comma separated)</span></label>
+                <input type="text" id="m-amen" placeholder="WiFi, Bills Included, Parking">
+            </div>
+        </div>
+        <div class="modal-row">
+            <button class="btn btn-ghost" onclick="closeModal('m-house')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveHouse()">Save Property</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Property Detail (Student) -->
+<div class="overlay" id="m-detail">
+    <div class="modal" id="m-detail-body"></div>
+</div>
+
+<!-- MODAL: Contact Landlord -->
+<div class="overlay" id="m-contact">
+    <div class="modal">
+        <h2 class="modal-title">Contact Landlord</h2>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Send an enquiry about this property.</p>
+        <div class="form-group">
+            <label>Your Message</label>
+            <textarea id="m-msg" placeholder="Hi, I'm interested in this property and would like to arrange a viewing…"></textarea>
+        </div>
+        <div class="modal-row">
+            <button class="btn btn-ghost" onclick="closeModal('m-contact')">Cancel</button>
+            <button class="btn btn-primary" onclick="sendMsg()">Send</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Confirm Delete -->
+<div class="overlay" id="m-del">
+    <div class="modal">
+        <h2 class="modal-title">Delete Property?</h2>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:20px">This cannot be undone.</p>
+        <input type="hidden" id="del-id">
+        <div class="modal-row">
+            <button class="btn btn-ghost" onclick="closeModal('m-del')">Cancel</button>
+            <button class="btn btn-danger" onclick="doDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* =====================================================
+   STATE
+===================================================== */
+let S = { user: null, users: [], houses: [], liked: [] };
+let chosenRole = 'landlord';
+
+const IMGS = [
+    'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=700&q=80',
+    'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=700&q=80',
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80',
+    'https://images.unsplash.com/photo-1494526585095-c41746248156?w=700&q=80',
+    'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=700&q=80',
+];
+
+/* =====================================================
+   INIT
+===================================================== */
+function init() {
+    load();
+    if (!S.houses.length) seed();
+    if (S.user) route();
+}
+
+function seed() {
+    S.users = [
+        { id:'u1', name:'Demo Landlord', email:'landlord@demo.com', pass:'password', role:'landlord' },
+        { id:'u2', name:'Demo Student',  email:'student@demo.com',  pass:'password', role:'student'  },
+    ];
+    S.houses = [
+        { id:'h1', lid:'u1', addr:'14 Victoria Street, Manchester', price:620,
+          desc:'Cosy 1-bed studio a 10-minute walk from the university. Newly refurbished with modern fixtures and appliances.',
+          img:IMGS[0], amen:['WiFi','Bills Included','Near Campus'] },
+        { id:'h2', lid:'u1', addr:'7 Park Lane, Leeds', price:550,
+          desc:'Spacious room in a friendly 4-bed shared house. 10-minute walk to campus. Great community atmosphere.',
+          img:IMGS[1], amen:['WiFi','Parking','Garden'] },
+        { id:'h3', lid:'u1', addr:'33 King Street, Birmingham', price:700,
+          desc:'Modern 1-bed apartment with sweeping city views. Excellent transport links to all universities.',
+          img:IMGS[2], amen:['WiFi','Gym Access','Concierge','City Views'] },
+        { id:'h4', lid:'u1', addr:'2 Elm Close, Sheffield', price:480,
+          desc:'Affordable en-suite room in a popular student house. All bills included. Very well-connected area.',
+          img:IMGS[3], amen:['WiFi','Bills Included','En-Suite'] },
+        { id:'h5', lid:'u1', addr:'19 Maple Avenue, Bristol', price:595,
+          desc:'Bright 2-bed flat available from September. Quiet residential area, large garden, off-street parking.',
+          img:IMGS[4], amen:['WiFi','Parking','Garden','Quiet Area'] },
+    ];
+    save();
+}
+
+function load() {
+    const raw = localStorage.getItem('houzme');
+    if (raw) {
+        const d = JSON.parse(raw);
+        S.users  = d.users  || [];
+        S.houses = d.houses || [];
+        S.liked  = d.liked  || [];
+    }
+    const uid = localStorage.getItem('houzme_uid');
+    if (uid) S.user = S.users.find(u => u.id === uid) || null;
+}
+
+function save() {
+    localStorage.setItem('houzme', JSON.stringify({ users:S.users, houses:S.houses, liked:S.liked }));
+    if (S.user) localStorage.setItem('houzme_uid', S.user.id);
+    else        localStorage.removeItem('houzme_uid');
+}
+
+/* =====================================================
+   ROUTING
+===================================================== */
+function go(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function route() {
+    if (!S.user) { go('s-login'); return; }
+    if (S.user.role === 'landlord') {
+        go('s-landlord');
+        document.getElementById('l-greet').textContent = 'Hi, ' + firstName();
+        lNav('props', document.getElementById('ln-props'));
+    } else {
+        go('s-student');
+        document.getElementById('s-greet').textContent = 'Hi, ' + firstName();
+        sNav('disc', document.getElementById('sn-disc'));
+    }
+}
+
+function firstName() { return S.user.name.split(' ')[0]; }
+
+/* =====================================================
+   AUTH
+===================================================== */
+function login() {
+    const email = v('l-email'), pass = v('l-pass');
+    if (!email || !pass) { toast('Please fill in all fields'); return; }
+    const u = S.users.find(x => x.email === email && x.pass === pass);
+    if (!u) { toast('Incorrect email or password'); return; }
+    S.user = u; save(); route();
+}
+
+function demoLogin(role) {
+    const email = role === 'landlord' ? 'landlord@demo.com' : 'student@demo.com';
+    const u = S.users.find(x => x.email === email);
+    if (u) { S.user = u; save(); route(); }
+}
+
+function pickRole(r) {
+    chosenRole = r;
+    document.getElementById('r-landlord').classList.toggle('active', r === 'landlord');
+    document.getElementById('r-student').classList.toggle('active',  r === 'student');
+}
+
+function signup() {
+    const name  = v('su-name');
+    const email = v('su-email');
+    const pass  = v('su-pass');
+    if (!name || !email || !pass) { toast('Please fill in all fields'); return; }
+    if (S.users.find(u => u.email === email)) { toast('Email already registered'); return; }
+    if (pass.length < 6) { toast('Password must be at least 6 characters'); return; }
+    const u = { id:'u'+Date.now(), name, email, pass, role:chosenRole };
+    S.users.push(u);
+    S.user = u; save(); route();
+    toast('Welcome to HouzME, ' + name + '! 🎉');
+}
+
+function logout() {
+    S.user = null; save();
+    swipeIndex = 0;
+    go('s-login');
+}
+
+/* =====================================================
+   LANDLORD
+===================================================== */
+function lNav(tab, btn) {
+    document.querySelectorAll('#s-landlord .nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const body = document.getElementById('l-body');
+    if (tab === 'props') {
+        body.innerHTML = renderPropsHTML();
+    } else {
+        body.innerHTML = renderLandlordProfileHTML();
+    }
+}
+
+function myHouses() { return S.houses.filter(h => h.lid === S.user.id); }
+
+function renderPropsHTML() {
+    const houses = myHouses();
+    let html = `<div class="content">
+        <div class="section-head">
+            <span class="section-title">My Properties</span>
+            <button class="btn btn-primary btn-sm" onclick="openAdd()">+ Add</button>
+        </div>`;
+    if (!houses.length) {
+        html += `<div class="empty"><div class="empty-icon">🏠</div><h3>No properties yet</h3><p>Add your first property to start attracting students.</p></div>`;
+    } else {
+        houses.forEach(h => {
+            html += `<div class="prop-card">
+                <img src="${esc(h.img)}" alt="" onerror="this.src='${IMGS[0]}'">
+                <div class="prop-body">
+                    <div class="prop-name">${esc(h.addr)}</div>
+                    <div class="prop-price">£${h.price}/month</div>
+                    <div class="tags">${(h.amen||[]).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}</div>
+                    <div class="prop-desc">${esc(h.desc)}</div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline btn-sm" onclick="openEdit('${h.id}')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDel('${h.id}')">Delete</button>
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+    html += '</div>';
+    return html;
+}
+
+function renderLandlordProfileHTML() {
+    const houses = myHouses();
+    return `<div class="profile-hero">
+        <div class="avatar">🏠</div>
+        <div class="profile-name">${esc(S.user.name)}</div>
+        <div class="profile-role-label">Landlord</div>
+    </div>
+    <div class="stats-row">
+        <div class="stat"><div class="stat-n">${houses.length}</div><div class="stat-l">Properties</div></div>
+        <div class="stat"><div class="stat-n">£${houses.reduce((s,h)=>s+h.price,0).toLocaleString()}</div><div class="stat-l">Total Rent/mo</div></div>
+        <div class="stat"><div class="stat-n">${S.liked.length}</div><div class="stat-l">Student Likes</div></div>
+    </div>
+    <div class="content" style="padding-top:4px">
+        <button class="btn btn-danger" onclick="logout()">Sign Out</button>
+    </div>`;
+}
+
+function openAdd() {
+    document.getElementById('m-house-title').textContent = 'Add Property';
+    ['m-id','m-addr','m-price','m-desc','m-img','m-amen'].forEach(id => document.getElementById(id).value = '');
+    openModal('m-house');
+}
+
+function openEdit(id) {
+    const h = S.houses.find(x => x.id === id); if (!h) return;
+    document.getElementById('m-house-title').textContent = 'Edit Property';
+    document.getElementById('m-id').value    = id;
+    document.getElementById('m-addr').value  = h.addr;
+    document.getElementById('m-price').value = h.price;
+    document.getElementById('m-desc').value  = h.desc;
+    document.getElementById('m-img').value   = h.img || '';
+    document.getElementById('m-amen').value  = (h.amen||[]).join(', ');
+    openModal('m-house');
+}
+
+function saveHouse() {
+    const id    = v('m-id');
+    const addr  = v('m-addr');
+    const price = parseInt(v('m-price'));
+    const desc  = v('m-desc');
+    const img   = v('m-img');
+    const amen  = v('m-amen').split(',').map(a=>a.trim()).filter(Boolean);
+    if (!addr || !price || !desc) { toast('Please fill in address, rent, and description'); return; }
+    if (id) {
+        const i = S.houses.findIndex(x => x.id === id);
+        if (i > -1) S.houses[i] = { ...S.houses[i], addr, price, desc, img: img || S.houses[i].img, amen };
+        toast('Property updated ✓');
+    } else {
+        S.houses.push({ id:'h'+Date.now(), lid:S.user.id, addr, price, desc,
+            img: img || IMGS[Math.floor(Math.random()*IMGS.length)], amen });
+        toast('Property added ✓');
+    }
+    save(); closeModal('m-house');
+    lNav('props', document.getElementById('ln-props'));
+}
+
+function openDel(id) {
+    document.getElementById('del-id').value = id;
+    openModal('m-del');
+}
+
+function doDelete() {
+    const id = document.getElementById('del-id').value;
+    S.houses = S.houses.filter(h => h.id !== id);
+    S.liked  = S.liked.filter(i => i !== id);
+    save(); closeModal('m-del');
+    lNav('props', document.getElementById('ln-props'));
+    toast('Property deleted');
+}
+
+/* =====================================================
+   STUDENT NAVIGATION
+===================================================== */
+function sNav(tab, btn) {
+    document.querySelectorAll('#s-student .nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const body = document.getElementById('s-body');
+    if (tab === 'disc')    { body.innerHTML = ''; renderSwipe(); }
+    else if (tab === 'liked')   { body.innerHTML = renderLikedHTML(); }
+    else if (tab === 'profile') { body.innerHTML = renderStudentProfileHTML(); }
+}
+
+/* =====================================================
+   SWIPE
+===================================================== */
+let swipeIndex = 0;
+let swipeDeck  = [];
+let dragging   = false, sx = 0, cx = 0;
+let topCard    = null;
+
+function renderSwipe() {
+    swipeDeck = S.houses.filter(h => !S.liked.includes(h.id));
+    swipeIndex = 0;
+    const body = document.getElementById('s-body');
+    body.innerHTML = `<div class="swipe-screen">
+        <div class="card-stack" id="stack"></div>
+        <div class="swipe-btns" id="swipe-btns">
+            <button class="swipe-btn nope" onclick="swipe('left')" title="Pass">✕</button>
+            <button class="swipe-btn info" onclick="detailCard()" title="Details">ℹ</button>
+            <button class="swipe-btn like" onclick="swipe('right')" title="Like">♥</button>
+        </div>
+    </div>`;
+    buildStack();
+}
+
+function buildStack() {
+    const stack = document.getElementById('stack');
+    const btns  = document.getElementById('swipe-btns');
+    if (!stack) return;
+    const rem = swipeDeck.slice(swipeIndex);
+    if (!rem.length) {
+        stack.innerHTML = `<div class="empty" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center">
+            <div class="empty-icon">🏠</div><h3>All caught up!</h3>
+            <p>You've seen all available properties.<br>Check your liked houses.</p>
+        </div>`;
+        if (btns) btns.style.display = 'none';
+        return;
+    }
+    if (btns) btns.style.display = 'flex';
+    const show = rem.slice(0, 3);
+    stack.innerHTML = '';
+    show.slice().reverse().forEach((h, i) => {
+        const isTop = i === show.length - 1;
+        const card = document.createElement('div');
+        card.className = 'swipe-card' + (isTop ? ' top' : '');
+        card.dataset.id = h.id;
+        if (i === 0) card.style.cssText = 'transform:scale(0.88) translateY(28px);z-index:1';
+        if (i === 1) card.style.cssText = 'transform:scale(0.94) translateY(14px);z-index:2';
+        if (isTop)   card.style.cssText = 'z-index:10';
+        card.innerHTML = `
+            <img src="${esc(h.img)}" alt="" onerror="this.src='${IMGS[0]}'">
+            <div class="stamp like">LIKE</div>
+            <div class="stamp nope">NOPE</div>
+            <div class="swipe-info">
+                <div class="swipe-title">${esc(h.addr)}</div>
+                <div class="swipe-price">£${h.price}/month</div>
+                <div class="swipe-desc">${esc(h.desc)}</div>
+            </div>`;
+        stack.appendChild(card);
+        if (isTop) {
+            topCard = card;
+            card.addEventListener('mousedown',  ds);
+            card.addEventListener('touchstart', ds, { passive:true });
+        }
+    });
+}
+
+function ds(e) {
+    dragging = true; topCard = e.currentTarget;
+    const p = e.touches ? e.touches[0] : e;
+    sx = p.clientX; cx = 0;
+    topCard.style.transition = 'none';
+    document.addEventListener('mousemove',  dm);
+    document.addEventListener('touchmove',  dm, { passive:true });
+    document.addEventListener('mouseup',    du);
+    document.addEventListener('touchend',   du);
+}
+
+function dm(e) {
+    if (!dragging || !topCard) return;
+    const p = e.touches ? e.touches[0] : e;
+    cx = p.clientX - sx;
+    const rot = cx * 0.08;
+    topCard.style.transform = `translateX(${cx}px) rotate(${rot}deg)`;
+    const like = topCard.querySelector('.stamp.like');
+    const nope = topCard.querySelector('.stamp.nope');
+    const t = 50;
+    if (cx > t)        { like.style.opacity = Math.min((cx-t)/60,1); nope.style.opacity=0; }
+    else if (cx < -t)  { nope.style.opacity = Math.min((-cx-t)/60,1); like.style.opacity=0; }
+    else               { like.style.opacity=0; nope.style.opacity=0; }
+}
+
+function du() {
+    if (!dragging || !topCard) return;
+    dragging = false;
+    document.removeEventListener('mousemove', dm);
+    document.removeEventListener('touchmove', dm);
+    document.removeEventListener('mouseup',   du);
+    document.removeEventListener('touchend',  du);
+    if (cx >  110) animateOut('right');
+    else if (cx < -110) animateOut('left');
+    else {
+        topCard.style.transition = 'transform 0.35s ease';
+        topCard.style.transform  = '';
+        topCard.querySelectorAll('.stamp').forEach(s => s.style.opacity = 0);
+    }
+}
+
+function swipe(dir) {
+    if (!topCard) {
+        const stack = document.getElementById('stack');
+        topCard = stack ? stack.querySelector('.swipe-card.top') : null;
+    }
+    if (!topCard) return;
+    animateOut(dir);
+}
+
+function animateOut(dir) {
+    const card = topCard;
+    const hid  = card.dataset.id;
+    const x    = dir === 'right' ? 600 : -600;
+    card.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+    card.style.transform  = `translateX(${x}px) rotate(${dir==='right'?30:-30}deg)`;
+    card.style.opacity    = '0';
+    if (dir === 'right' && !S.liked.includes(hid)) {
+        S.liked.push(hid);
+        save();
+        toast('Added to liked houses ♥');
+    }
+    swipeIndex++;
+    topCard = null;
+    setTimeout(buildStack, 420);
+}
+
+function detailCard() {
+    const rem = swipeDeck.slice(swipeIndex);
+    if (!rem.length) return;
+    const h = rem[0];
+    document.getElementById('m-detail-body').innerHTML = `
+        <img src="${esc(h.img)}" alt="" style="width:100%;height:210px;object-fit:cover;border-radius:14px;margin-bottom:16px" onerror="this.src='${IMGS[0]}'">
+        <div style="font-size:19px;font-weight:800;margin-bottom:6px">${esc(h.addr)}</div>
+        <div style="font-size:24px;font-weight:900;color:var(--primary);margin-bottom:14px">£${h.price}/month</div>
+        <div class="tags">${(h.amen||[]).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:4px">${esc(h.desc)}</p>
+        <div class="modal-row">
+            <button class="btn btn-ghost" onclick="closeModal('m-detail')">Close</button>
+            <button class="btn btn-primary" onclick="closeModal('m-detail');openContact('${h.id}')">Contact Landlord</button>
+        </div>`;
+    openModal('m-detail');
+}
+
+/* =====================================================
+   LIKED & STUDENT PROFILE
+===================================================== */
+function renderLikedHTML() {
+    const houses = S.houses.filter(h => S.liked.includes(h.id));
+    let html = `<div class="content">
+        <div class="section-title">Liked Houses${houses.length ? ' ('+houses.length+')' : ''}</div>`;
+    if (!houses.length) {
+        html += `<div class="empty"><div class="empty-icon">♥</div><h3>No liked houses yet</h3><p>Swipe right on properties you love!</p></div>`;
+    } else {
+        houses.forEach(h => {
+            html += `<div class="liked-item">
+                <img src="${esc(h.img)}" alt="" onerror="this.src='${IMGS[0]}'">
+                <div class="liked-body">
+                    <div class="liked-name">${esc(h.addr)}</div>
+                    <div class="liked-price">£${h.price}/month</div>
+                    <div class="tags" style="margin-bottom:8px">${(h.amen||[]).slice(0,2).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}</div>
+                    <button class="btn btn-primary btn-sm" onclick="openContact('${h.id}')">Contact</button>
+                </div>
+            </div>`;
+        });
+    }
+    html += '</div>';
+    return html;
+}
+
+function renderStudentProfileHTML() {
+    const toSee = Math.max(0, S.houses.length - S.liked.length);
+    return `<div class="profile-hero">
+        <div class="avatar">🎓</div>
+        <div class="profile-name">${esc(S.user.name)}</div>
+        <div class="profile-role-label">Student</div>
+    </div>
+    <div class="stats-row">
+        <div class="stat"><div class="stat-n">${S.houses.length}</div><div class="stat-l">Available</div></div>
+        <div class="stat"><div class="stat-n">${S.liked.length}</div><div class="stat-l">Liked</div></div>
+        <div class="stat"><div class="stat-n">${toSee}</div><div class="stat-l">To See</div></div>
+    </div>
+    <div class="content" style="padding-top:4px">
+        <button class="btn btn-ghost" onclick="clearLikes()">Reset Liked Houses</button>
+        <button class="btn btn-danger" onclick="logout()">Sign Out</button>
+    </div>`;
+}
+
+function clearLikes() {
+    S.liked = []; save();
+    document.getElementById('s-body').innerHTML = renderStudentProfileHTML();
+    toast('Liked houses reset');
+}
+
+/* =====================================================
+   CONTACT
+===================================================== */
+function openContact(hid) {
+    document.getElementById('m-contact').dataset.hid = hid;
+    document.getElementById('m-msg').value = '';
+    openModal('m-contact');
+}
+
+function sendMsg() {
+    const msg = v('m-msg');
+    if (!msg) { toast('Please enter a message'); return; }
+    closeModal('m-contact');
+    toast('Message sent to landlord ✓');
+}
+
+/* =====================================================
+   MODAL HELPERS
+===================================================== */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o =>
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+/* =====================================================
+   UTILS
+===================================================== */
+function v(id) { return document.getElementById(id).value.trim(); }
+function esc(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+init();
+</script>
+</body>
+</html>
