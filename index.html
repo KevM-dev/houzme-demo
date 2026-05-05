@@ -112,11 +112,18 @@
             width: 100%;
             transition: border-color 0.2s;
             color: var(--text);
+            font-family: inherit;
         }
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus { border-color: var(--primary); }
         .form-group textarea { min-height: 90px; resize: vertical; }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .checkbox-row {
+            display: flex; align-items: center; gap: 10px; padding: 10px 0;
+            font-size: 14px; cursor: pointer; user-select: none;
+        }
+        .checkbox-row input { width: 18px; height: 18px; accent-color: var(--primary); }
 
         .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .role-option {
@@ -148,6 +155,7 @@
             transition: transform 0.15s, opacity 0.15s;
             display: block;
             width: 100%;
+            font-family: inherit;
         }
         .btn:active { transform: scale(0.97); opacity: 0.9; }
         .btn-primary { background: var(--primary); color: white; }
@@ -162,20 +170,57 @@
         .section-head { display: flex; justify-content: space-between; align-items: center; }
         .section-title { font-size: 20px; font-weight: 800; }
 
+        /* ---- FILTER BAR ---- */
+        .filter-bar {
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 0 16px 12px;
+            flex-shrink: 0;
+        }
+        .filter-bar .filter-row { display: grid; grid-template-columns: 1.4fr 1fr 1.2fr; gap: 8px; }
+        .filter-bar input,
+        .filter-bar select {
+            padding: 9px 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+            color: var(--text);
+            background: white;
+            min-width: 0;
+        }
+        .filter-bar input:focus,
+        .filter-bar select:focus { border-color: var(--primary); }
+        .filter-bar .filter-actions { display: flex; gap: 8px; }
+        .filter-bar .filter-actions .btn { padding: 9px 12px; font-size: 13px; border-radius: 9px; }
+        .filter-summary {
+            font-size: 12px; color: var(--muted);
+            padding: 0 16px 8px; text-align: center;
+        }
+
         /* ---- PROPERTY CARD (landlord list) ---- */
         .prop-card { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
         .prop-card img { width: 100%; height: 170px; object-fit: cover; display: block; }
         .prop-body { padding: 16px; }
         .prop-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .prop-meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
         .prop-price { font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
         .prop-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
         .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
         .tag { background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .tag-muted { background: var(--bg); color: var(--text); }
         .card-actions { display: flex; gap: 8px; }
 
         /* ---- SWIPE AREA ---- */
-        .swipe-screen { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 16px 16px 0; padding-bottom: 90px; overflow: hidden; }
-        .card-stack { position: relative; width: 100%; height: 460px; margin-bottom: 20px; flex-shrink: 0; }
+        .swipe-screen { flex: 1; display: flex; flex-direction: column; padding-bottom: 90px; overflow: hidden; }
+        .swipe-stage { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 4px 16px 0; min-height: 0; }
+        .card-stack { position: relative; width: 100%; height: 460px; margin-bottom: 18px; flex-shrink: 0; max-width: 420px; }
 
         .swipe-card {
             position: absolute;
@@ -190,10 +235,11 @@
         }
         .swipe-card:active { cursor: grabbing; }
         .swipe-card img { width: 100%; height: 62%; object-fit: cover; display: block; pointer-events: none; }
-        .swipe-info { padding: 16px; }
-        .swipe-title { font-size: 17px; font-weight: 800; }
-        .swipe-price { font-size: 22px; font-weight: 900; color: var(--primary); margin: 4px 0 8px; }
-        .swipe-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+        .swipe-info { padding: 14px 16px; }
+        .swipe-title { font-size: 16px; font-weight: 800; }
+        .swipe-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .swipe-price { font-size: 22px; font-weight: 900; color: var(--primary); margin: 4px 0 6px; }
+        .swipe-desc { font-size: 12px; color: var(--muted); line-height: 1.4; max-height: 36px; overflow: hidden; }
 
         .stamp {
             position: absolute;
@@ -211,17 +257,17 @@
         .stamp.like { right: 20px; color: var(--green); border-color: var(--green); transform: rotate(15deg); }
         .stamp.nope { left: 20px; color: var(--red); border-color: var(--red); transform: rotate(-15deg); }
 
-        .swipe-btns { display: flex; gap: 20px; justify-content: center; }
+        .swipe-btns { display: flex; gap: 20px; justify-content: center; flex-shrink: 0; }
         .swipe-btn {
-            width: 64px;
-            height: 64px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: white;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 24px;
             cursor: pointer;
             box-shadow: var(--shadow);
             transition: transform 0.2s;
@@ -236,6 +282,7 @@
         .liked-item img { width: 96px; height: 96px; object-fit: cover; flex-shrink: 0; }
         .liked-body { padding: 12px; flex: 1; min-width: 0; }
         .liked-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .liked-meta { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
         .liked-price { font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
 
         /* ---- PROFILE ---- */
@@ -245,8 +292,41 @@
         .profile-role-label { font-size: 13px; opacity: 0.75; margin-top: 4px; }
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px; }
         .stat { background: white; border-radius: 12px; padding: 14px 8px; text-align: center; box-shadow: var(--shadow); }
-        .stat-n { font-size: 24px; font-weight: 900; color: var(--primary); }
+        .stat-n { font-size: 22px; font-weight: 900; color: var(--primary); }
         .stat-l { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+        /* ---- DETAIL VIEW ---- */
+        .gallery {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 14px;
+            border-radius: 14px;
+        }
+        .gallery::-webkit-scrollbar { display: none; }
+        .gallery img {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 14px;
+            background: var(--bg);
+        }
+        .detail-title { font-size: 19px; font-weight: 800; margin-bottom: 4px; }
+        .detail-sub { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+        .detail-price { font-size: 26px; font-weight: 900; color: var(--primary); margin-bottom: 14px; }
+        .kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .kv-item {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+        .kv-l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .kv-v { font-size: 14px; font-weight: 700; color: var(--text); }
+        .detail-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 4px; }
 
         /* ---- EMPTY STATE ---- */
         .empty { text-align: center; padding: 48px 24px; color: var(--muted); }
@@ -431,19 +511,54 @@
         <div style="display:flex;flex-direction:column;gap:14px">
             <div class="form-group">
                 <label>Address / Property Name</label>
-                <input type="text" id="m-addr" placeholder="e.g. 14 Oak Street, Manchester">
+                <input type="text" id="m-addr" placeholder="e.g. 14 Oak Street">
             </div>
-            <div class="form-group">
-                <label>Monthly Rent (£)</label>
-                <input type="number" id="m-price" placeholder="e.g. 650" min="1">
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="m-city" placeholder="e.g. Norwich">
+                </div>
+                <div class="form-group">
+                    <label>Monthly Rent (£)</label>
+                    <input type="number" id="m-price" placeholder="650" min="1">
+                </div>
             </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Bedrooms</label>
+                    <input type="number" id="m-beds" min="1" max="20" value="1">
+                </div>
+                <div class="form-group">
+                    <label>House Type</label>
+                    <select id="m-type">
+                        <option value="studio">Studio</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="shared_house">Shared House</option>
+                        <option value="ensuite_room">En-suite Room</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Tenancy Start</label>
+                    <input type="date" id="m-tstart">
+                </div>
+                <div class="form-group">
+                    <label>Tenancy End</label>
+                    <input type="date" id="m-tend">
+                </div>
+            </div>
+            <label class="checkbox-row">
+                <input type="checkbox" id="m-bills">
+                <span>Bills included</span>
+            </label>
             <div class="form-group">
                 <label>Description</label>
                 <textarea id="m-desc" placeholder="Describe the property…"></textarea>
             </div>
             <div class="form-group">
-                <label>Image URL <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-                <input type="url" id="m-img" placeholder="https://…">
+                <label>Image URLs <span style="color:var(--muted);font-weight:400">(one per line, up to 6)</span></label>
+                <textarea id="m-imgs" placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg" style="min-height:80px"></textarea>
             </div>
             <div class="form-group">
                 <label>Amenities <span style="color:var(--muted);font-weight:400">(comma separated)</span></label>
@@ -493,17 +608,32 @@
 
 <script>
 /* =====================================================
-   STATE
+   STATE — schema v2
+   houses: { id, lid, addr, city, postcode, price, beds, type,
+             tStart, tEnd, bills, desc, imgs[], amen[] }
+   likes:  { [userId]: [houseId, ...] }
+   passes: { [userId]: [houseId, ...] }
 ===================================================== */
-let S = { user: null, users: [], houses: [], liked: [] };
+let S = { user: null, users: [], houses: [], likes: {}, passes: {} };
 let chosenRole = 'landlord';
+let filters = { city: '', maxPrice: '', type: '' };
+
+const TYPE_LABELS = {
+    studio: 'Studio',
+    apartment: 'Apartment',
+    shared_house: 'Shared House',
+    ensuite_room: 'En-suite Room'
+};
 
 const IMGS = [
-    'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=700&q=80',
-    'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=700&q=80',
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80',
-    'https://images.unsplash.com/photo-1494526585095-c41746248156?w=700&q=80',
-    'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=700&q=80',
+    'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=900&q=80',
+    'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=900&q=80',
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80',
+    'https://images.unsplash.com/photo-1494526585095-c41746248156?w=900&q=80',
+    'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=900&q=80',
+    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=900&q=80',
+    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=900&q=80',
+    'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=900&q=80'
 ];
 
 /* =====================================================
@@ -521,21 +651,55 @@ function seed() {
         { id:'u2', name:'Demo Student',  email:'student@demo.com',  pass:'password', role:'student'  },
     ];
     S.houses = [
-        { id:'h1', lid:'u1', addr:'14 Victoria Street, Manchester', price:620,
-          desc:'Cosy 1-bed studio a 10-minute walk from the university. Newly refurbished with modern fixtures and appliances.',
-          img:IMGS[0], amen:['WiFi','Bills Included','Near Campus'] },
-        { id:'h2', lid:'u1', addr:'7 Park Lane, Leeds', price:550,
-          desc:'Spacious room in a friendly 4-bed shared house. 10-minute walk to campus. Great community atmosphere.',
-          img:IMGS[1], amen:['WiFi','Parking','Garden'] },
-        { id:'h3', lid:'u1', addr:'33 King Street, Birmingham', price:700,
-          desc:'Modern 1-bed apartment with sweeping city views. Excellent transport links to all universities.',
-          img:IMGS[2], amen:['WiFi','Gym Access','Concierge','City Views'] },
-        { id:'h4', lid:'u1', addr:'2 Elm Close, Sheffield', price:480,
-          desc:'Affordable en-suite room in a popular student house. All bills included. Very well-connected area.',
-          img:IMGS[3], amen:['WiFi','Bills Included','En-Suite'] },
-        { id:'h5', lid:'u1', addr:'19 Maple Avenue, Bristol', price:595,
-          desc:'Bright 2-bed flat available from September. Quiet residential area, large garden, off-street parking.',
-          img:IMGS[4], amen:['WiFi','Parking','Garden','Quiet Area'] },
+        { id:'h1', lid:'u1',
+          addr:'14 Victoria Street', city:'Norwich', postcode:'NR1 3RZ',
+          price:620, beds:1, type:'studio',
+          tStart:'2026-09-01', tEnd:'2027-06-30', bills:true,
+          desc:'Cosy 1-bed studio a 10-minute walk from UEA. Newly refurbished with modern fixtures and appliances. Perfect for a first-year postgrad who wants to live alone.',
+          imgs:[IMGS[0], IMGS[5], IMGS[7]],
+          amen:['WiFi','Bills Included','Near Campus'] },
+        { id:'h2', lid:'u1',
+          addr:'7 Park Lane', city:'Leeds', postcode:'LS6 2AB',
+          price:550, beds:4, type:'shared_house',
+          tStart:'2026-09-15', tEnd:'2027-07-15', bills:false,
+          desc:'Spacious room in a friendly 4-bed shared house. 10-minute walk to Leeds Beckett. Great community atmosphere with current students who are second-year design and engineering.',
+          imgs:[IMGS[1], IMGS[6]],
+          amen:['WiFi','Parking','Garden'] },
+        { id:'h3', lid:'u1',
+          addr:'33 King Street', city:'Birmingham', postcode:'B3 1EN',
+          price:700, beds:1, type:'apartment',
+          tStart:'2026-09-01', tEnd:'2027-08-31', bills:false,
+          desc:'Modern 1-bed apartment with sweeping city views. Excellent transport links to UoB, BCU and Aston. Concierge in lobby, gym in basement.',
+          imgs:[IMGS[2], IMGS[3], IMGS[5], IMGS[7]],
+          amen:['WiFi','Gym Access','Concierge','City Views'] },
+        { id:'h4', lid:'u1',
+          addr:'2 Elm Close', city:'Sheffield', postcode:'S10 4FQ',
+          price:480, beds:5, type:'ensuite_room',
+          tStart:'2026-09-01', tEnd:'2027-06-30', bills:true,
+          desc:'Affordable en-suite room in a popular student house near University of Sheffield. All bills included. Tram links to both unis 4 minutes from the door.',
+          imgs:[IMGS[3], IMGS[6]],
+          amen:['WiFi','Bills Included','En-Suite'] },
+        { id:'h5', lid:'u1',
+          addr:'19 Maple Avenue', city:'Bristol', postcode:'BS6 7XP',
+          price:595, beds:2, type:'apartment',
+          tStart:'2026-09-01', tEnd:'2027-07-31', bills:false,
+          desc:'Bright 2-bed flat available from September. Quiet residential area, large garden, off-street parking. Five minutes by bus to UWE Frenchay.',
+          imgs:[IMGS[4], IMGS[0], IMGS[2]],
+          amen:['WiFi','Parking','Garden','Quiet Area'] },
+        { id:'h6', lid:'u1',
+          addr:'42 Earlham Road', city:'Norwich', postcode:'NR2 3DF',
+          price:560, beds:3, type:'shared_house',
+          tStart:'2026-09-01', tEnd:'2027-06-30', bills:false,
+          desc:'Three-bed mid-terrace minutes from UEA on the 25 bus route. Big lounge, decent kitchen, sunny rear garden. Looking for one student to fill the last room with two friendly second-years.',
+          imgs:[IMGS[5], IMGS[1], IMGS[4]],
+          amen:['WiFi','Garden','Near Campus'] },
+        { id:'h7', lid:'u1',
+          addr:'Flat 8, St Stephens Court', city:'Norwich', postcode:'NR1 3SP',
+          price:725, beds:1, type:'studio',
+          tStart:'2026-09-01', tEnd:'2027-08-31', bills:true,
+          desc:'Premium central Norwich studio with everything in walking distance — NUA campus 5 minutes, Castle Quarter 8 minutes, the Lanes 10 minutes. Bills, WiFi and contents insurance included.',
+          imgs:[IMGS[7], IMGS[6], IMGS[2]],
+          amen:['WiFi','Bills Included','City Centre','Furnished'] },
     ];
     save();
 }
@@ -543,17 +707,51 @@ function seed() {
 function load() {
     const raw = localStorage.getItem('houzme');
     if (raw) {
-        const d = JSON.parse(raw);
-        S.users  = d.users  || [];
-        S.houses = d.houses || [];
-        S.liked  = d.liked  || [];
+        try {
+            const d = JSON.parse(raw);
+            S.users  = d.users  || [];
+            S.houses = (d.houses || []).map(migrateHouse);
+            // schema v1 → v2 migration: an old top-level liked[] was per-device.
+            // Move it under the demo student so the prototype keeps working.
+            if (Array.isArray(d.liked) && !d.likes) {
+                S.likes = { u2: d.liked };
+            } else {
+                S.likes = d.likes || {};
+            }
+            S.passes = d.passes || {};
+        } catch (e) {
+            console.warn('Could not parse stored data, reseeding.', e);
+        }
     }
     const uid = localStorage.getItem('houzme_uid');
     if (uid) S.user = S.users.find(u => u.id === uid) || null;
 }
 
+function migrateHouse(h) {
+    // schema v1 had single h.img and no city/beds/type/tenancy/bills.
+    if (h.imgs) return h;
+    return {
+        id: h.id,
+        lid: h.lid,
+        addr: h.addr,
+        city: h.city || (h.addr || '').split(',').slice(-1)[0].trim() || '',
+        postcode: h.postcode || '',
+        price: h.price,
+        beds: h.beds || 1,
+        type: h.type || 'apartment',
+        tStart: h.tStart || '',
+        tEnd: h.tEnd || '',
+        bills: !!h.bills,
+        desc: h.desc,
+        imgs: h.img ? [h.img] : [IMGS[0]],
+        amen: h.amen || []
+    };
+}
+
 function save() {
-    localStorage.setItem('houzme', JSON.stringify({ users:S.users, houses:S.houses, liked:S.liked }));
+    localStorage.setItem('houzme', JSON.stringify({
+        users: S.users, houses: S.houses, likes: S.likes, passes: S.passes
+    }));
     if (S.user) localStorage.setItem('houzme_uid', S.user.id);
     else        localStorage.removeItem('houzme_uid');
 }
@@ -624,6 +822,15 @@ function logout() {
 }
 
 /* =====================================================
+   PER-USER LIKES / PASSES
+===================================================== */
+function uid() { return S.user ? S.user.id : null; }
+function myLikes()  { return S.likes[uid()]  || (S.likes[uid()]  = []); }
+function myPasses() { return S.passes[uid()] || (S.passes[uid()] = []); }
+function recordLike(hid)  { const a = myLikes();  if (!a.includes(hid)) a.push(hid); }
+function recordPass(hid)  { const a = myPasses(); if (!a.includes(hid)) a.push(hid); }
+
+/* =====================================================
    LANDLORD
 ===================================================== */
 function lNav(tab, btn) {
@@ -639,6 +846,15 @@ function lNav(tab, btn) {
 
 function myHouses() { return S.houses.filter(h => h.lid === S.user.id); }
 
+function totalLikesOnMyHouses() {
+    const ids = new Set(myHouses().map(h => h.id));
+    let n = 0;
+    Object.values(S.likes).forEach(list => {
+        list.forEach(hid => { if (ids.has(hid)) n++; });
+    });
+    return n;
+}
+
 function renderPropsHTML() {
     const houses = myHouses();
     let html = `<div class="content">
@@ -650,12 +866,18 @@ function renderPropsHTML() {
         html += `<div class="empty"><div class="empty-icon">🏠</div><h3>No properties yet</h3><p>Add your first property to start attracting students.</p></div>`;
     } else {
         houses.forEach(h => {
+            const cover = (h.imgs && h.imgs[0]) || IMGS[0];
             html += `<div class="prop-card">
-                <img src="${esc(h.img)}" alt="" onerror="this.src='${IMGS[0]}'">
+                <img src="${esc(cover)}" alt="" onerror="this.src='${IMGS[0]}'">
                 <div class="prop-body">
                     <div class="prop-name">${esc(h.addr)}</div>
+                    <div class="prop-meta">${esc(h.city || '')} · ${esc(TYPE_LABELS[h.type] || '')} · ${h.beds||1} bed${h.beds===1?'':'s'}</div>
                     <div class="prop-price">£${h.price}/month</div>
-                    <div class="tags">${(h.amen||[]).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}</div>
+                    <div class="tags">
+                        ${h.bills ? `<span class="tag">Bills inc.</span>` : ''}
+                        ${(h.amen||[]).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}
+                        ${h.imgs && h.imgs.length > 1 ? `<span class="tag tag-muted">${h.imgs.length} photos</span>` : ''}
+                    </div>
                     <div class="prop-desc">${esc(h.desc)}</div>
                     <div class="card-actions">
                         <button class="btn btn-outline btn-sm" onclick="openEdit('${h.id}')">Edit</button>
@@ -678,8 +900,8 @@ function renderLandlordProfileHTML() {
     </div>
     <div class="stats-row">
         <div class="stat"><div class="stat-n">${houses.length}</div><div class="stat-l">Properties</div></div>
-        <div class="stat"><div class="stat-n">£${houses.reduce((s,h)=>s+h.price,0).toLocaleString()}</div><div class="stat-l">Total Rent/mo</div></div>
-        <div class="stat"><div class="stat-n">${S.liked.length}</div><div class="stat-l">Student Likes</div></div>
+        <div class="stat"><div class="stat-n">£${houses.reduce((s,h)=>s+(h.price||0),0).toLocaleString()}</div><div class="stat-l">Total Rent/mo</div></div>
+        <div class="stat"><div class="stat-n">${totalLikesOnMyHouses()}</div><div class="stat-l">Student Likes</div></div>
     </div>
     <div class="content" style="padding-top:4px">
         <button class="btn btn-danger" onclick="logout()">Sign Out</button>
@@ -688,37 +910,72 @@ function renderLandlordProfileHTML() {
 
 function openAdd() {
     document.getElementById('m-house-title').textContent = 'Add Property';
-    ['m-id','m-addr','m-price','m-desc','m-img','m-amen'].forEach(id => document.getElementById(id).value = '');
+    ['m-id','m-addr','m-city','m-price','m-beds','m-tstart','m-tend','m-desc','m-imgs','m-amen']
+        .forEach(id => document.getElementById(id).value = '');
+    document.getElementById('m-beds').value = '1';
+    document.getElementById('m-type').value = 'studio';
+    document.getElementById('m-bills').checked = false;
     openModal('m-house');
 }
 
 function openEdit(id) {
     const h = S.houses.find(x => x.id === id); if (!h) return;
     document.getElementById('m-house-title').textContent = 'Edit Property';
-    document.getElementById('m-id').value    = id;
-    document.getElementById('m-addr').value  = h.addr;
-    document.getElementById('m-price').value = h.price;
-    document.getElementById('m-desc').value  = h.desc;
-    document.getElementById('m-img').value   = h.img || '';
-    document.getElementById('m-amen').value  = (h.amen||[]).join(', ');
+    document.getElementById('m-id').value     = id;
+    document.getElementById('m-addr').value   = h.addr || '';
+    document.getElementById('m-city').value   = h.city || '';
+    document.getElementById('m-price').value  = h.price || '';
+    document.getElementById('m-beds').value   = h.beds || 1;
+    document.getElementById('m-type').value   = h.type || 'studio';
+    document.getElementById('m-tstart').value = h.tStart || '';
+    document.getElementById('m-tend').value   = h.tEnd || '';
+    document.getElementById('m-bills').checked = !!h.bills;
+    document.getElementById('m-desc').value   = h.desc || '';
+    document.getElementById('m-imgs').value   = (h.imgs || []).join('\n');
+    document.getElementById('m-amen').value   = (h.amen || []).join(', ');
     openModal('m-house');
 }
 
 function saveHouse() {
-    const id    = v('m-id');
-    const addr  = v('m-addr');
-    const price = parseInt(v('m-price'));
-    const desc  = v('m-desc');
-    const img   = v('m-img');
-    const amen  = v('m-amen').split(',').map(a=>a.trim()).filter(Boolean);
+    const id     = v('m-id');
+    const addr   = v('m-addr');
+    const city   = v('m-city');
+    const price  = parseInt(v('m-price'));
+    const beds   = parseInt(v('m-beds')) || 1;
+    const type   = v('m-type') || 'studio';
+    const tStart = v('m-tstart');
+    const tEnd   = v('m-tend');
+    const bills  = document.getElementById('m-bills').checked;
+    const desc   = v('m-desc');
+    const imgsRaw = v('m-imgs');
+    const imgs = imgsRaw
+        ? imgsRaw.split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, 6)
+        : [];
+    const amen  = v('m-amen').split(',').map(a => a.trim()).filter(Boolean);
+
     if (!addr || !price || !desc) { toast('Please fill in address, rent, and description'); return; }
+    if (!city) { toast('Please add a city'); return; }
+    if (tStart && tEnd && tStart > tEnd) { toast('Tenancy end must be after start'); return; }
+
+    const finalImgs = imgs.length ? imgs : [IMGS[Math.floor(Math.random()*IMGS.length)]];
+
     if (id) {
         const i = S.houses.findIndex(x => x.id === id);
-        if (i > -1) S.houses[i] = { ...S.houses[i], addr, price, desc, img: img || S.houses[i].img, amen };
+        if (i > -1) S.houses[i] = {
+            ...S.houses[i],
+            addr, city, price, beds, type, tStart, tEnd, bills, desc,
+            imgs: finalImgs,
+            amen
+        };
         toast('Property updated ✓');
     } else {
-        S.houses.push({ id:'h'+Date.now(), lid:S.user.id, addr, price, desc,
-            img: img || IMGS[Math.floor(Math.random()*IMGS.length)], amen });
+        S.houses.push({
+            id: 'h'+Date.now(), lid: S.user.id,
+            addr, city, postcode: '',
+            price, beds, type, tStart, tEnd, bills, desc,
+            imgs: finalImgs,
+            amen
+        });
         toast('Property added ✓');
     }
     save(); closeModal('m-house');
@@ -733,7 +990,9 @@ function openDel(id) {
 function doDelete() {
     const id = document.getElementById('del-id').value;
     S.houses = S.houses.filter(h => h.id !== id);
-    S.liked  = S.liked.filter(i => i !== id);
+    // Clean every user's likes/passes of the gone house.
+    Object.keys(S.likes).forEach(u => { S.likes[u]  = (S.likes[u]  || []).filter(i => i !== id); });
+    Object.keys(S.passes).forEach(u => { S.passes[u] = (S.passes[u] || []).filter(i => i !== id); });
     save(); closeModal('m-del');
     lNav('props', document.getElementById('ln-props'));
     toast('Property deleted');
@@ -746,9 +1005,48 @@ function sNav(tab, btn) {
     document.querySelectorAll('#s-student .nav-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const body = document.getElementById('s-body');
-    if (tab === 'disc')    { body.innerHTML = ''; renderSwipe(); }
+    if (tab === 'disc')         { body.innerHTML = ''; renderSwipe(); }
     else if (tab === 'liked')   { body.innerHTML = renderLikedHTML(); }
     else if (tab === 'profile') { body.innerHTML = renderStudentProfileHTML(); }
+}
+
+/* =====================================================
+   FILTERS + DECK BUILD
+===================================================== */
+function applyFilters() {
+    filters.city     = (document.getElementById('f-city')    || {}).value || '';
+    filters.maxPrice = (document.getElementById('f-max')     || {}).value || '';
+    filters.type     = (document.getElementById('f-type')    || {}).value || '';
+    swipeIndex = 0;
+    renderSwipe();
+    const n = activeFilterCount();
+    if (n) toast(`${n} filter${n>1?'s':''} applied`);
+    else   toast('Filters cleared');
+}
+
+function clearFilters() {
+    filters = { city: '', maxPrice: '', type: '' };
+    swipeIndex = 0;
+    renderSwipe();
+}
+
+function activeFilterCount() {
+    return ['city','maxPrice','type'].filter(k => filters[k]).length;
+}
+
+function buildDeck() {
+    const liked = myLikes();
+    const passed = myPasses();
+    const cityQ = (filters.city || '').trim().toLowerCase();
+    const max = parseInt(filters.maxPrice);
+    return S.houses.filter(h => {
+        if (liked.includes(h.id))  return false;
+        if (passed.includes(h.id)) return false;
+        if (cityQ && !(h.city || '').toLowerCase().includes(cityQ)) return false;
+        if (!isNaN(max) && h.price > max) return false;
+        if (filters.type && h.type !== filters.type) return false;
+        return true;
+    });
 }
 
 /* =====================================================
@@ -760,15 +1058,36 @@ let dragging   = false, sx = 0, cx = 0;
 let topCard    = null;
 
 function renderSwipe() {
-    swipeDeck = S.houses.filter(h => !S.liked.includes(h.id));
+    swipeDeck = buildDeck();
     swipeIndex = 0;
     const body = document.getElementById('s-body');
+    const n = activeFilterCount();
     body.innerHTML = `<div class="swipe-screen">
-        <div class="card-stack" id="stack"></div>
-        <div class="swipe-btns" id="swipe-btns">
-            <button class="swipe-btn nope" onclick="swipe('left')" title="Pass">✕</button>
-            <button class="swipe-btn info" onclick="detailCard()" title="Details">ℹ</button>
-            <button class="swipe-btn like" onclick="swipe('right')" title="Like">♥</button>
+        <div class="filter-bar">
+            <div class="filter-row">
+                <input id="f-city" placeholder="City" value="${esc(filters.city)}">
+                <input id="f-max" type="number" placeholder="Max £" value="${esc(filters.maxPrice)}">
+                <select id="f-type">
+                    <option value="">Any type</option>
+                    <option value="studio"        ${filters.type==='studio'?'selected':''}>Studio</option>
+                    <option value="apartment"     ${filters.type==='apartment'?'selected':''}>Apartment</option>
+                    <option value="shared_house"  ${filters.type==='shared_house'?'selected':''}>Shared</option>
+                    <option value="ensuite_room"  ${filters.type==='ensuite_room'?'selected':''}>En-suite</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-primary" onclick="applyFilters()">Apply</button>
+                ${n ? `<button class="btn btn-ghost" onclick="clearFilters()">Clear</button>` : ''}
+            </div>
+        </div>
+        <div class="filter-summary">${swipeDeck.length} match${swipeDeck.length===1?'':'es'}${n?' · '+n+' filter'+(n>1?'s':''):''}</div>
+        <div class="swipe-stage">
+            <div class="card-stack" id="stack"></div>
+            <div class="swipe-btns" id="swipe-btns">
+                <button class="swipe-btn nope" onclick="swipe('left')" title="Pass">✕</button>
+                <button class="swipe-btn info" onclick="detailCard()" title="Details">ℹ</button>
+                <button class="swipe-btn like" onclick="swipe('right')" title="Like">♥</button>
+            </div>
         </div>
     </div>`;
     buildStack();
@@ -780,9 +1099,13 @@ function buildStack() {
     if (!stack) return;
     const rem = swipeDeck.slice(swipeIndex);
     if (!rem.length) {
+        const totalSeen = myLikes().length + myPasses().length;
+        const filtered = activeFilterCount() > 0;
         stack.innerHTML = `<div class="empty" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center">
-            <div class="empty-icon">🏠</div><h3>All caught up!</h3>
-            <p>You've seen all available properties.<br>Check your liked houses.</p>
+            <div class="empty-icon">🏠</div><h3>${filtered?'No matches':'All caught up!'}</h3>
+            <p>${filtered
+                ? 'Try widening your filters to see more places.'
+                : (totalSeen ? "You've seen all available properties.<br>Check your liked houses." : 'No properties yet.')}</p>
         </div>`;
         if (btns) btns.style.display = 'none';
         return;
@@ -798,12 +1121,14 @@ function buildStack() {
         if (i === 0) card.style.cssText = 'transform:scale(0.88) translateY(28px);z-index:1';
         if (i === 1) card.style.cssText = 'transform:scale(0.94) translateY(14px);z-index:2';
         if (isTop)   card.style.cssText = 'z-index:10';
+        const cover = (h.imgs && h.imgs[0]) || IMGS[0];
         card.innerHTML = `
-            <img src="${esc(h.img)}" alt="" onerror="this.src='${IMGS[0]}'">
+            <img src="${esc(cover)}" alt="" onerror="this.src='${IMGS[0]}'">
             <div class="stamp like">LIKE</div>
             <div class="stamp nope">NOPE</div>
             <div class="swipe-info">
                 <div class="swipe-title">${esc(h.addr)}</div>
+                <div class="swipe-meta">${esc(h.city || '')} · ${esc(TYPE_LABELS[h.type] || '')} · ${h.beds||1} bed${h.beds===1?'':'s'}${h.bills?' · Bills inc.':''}</div>
                 <div class="swipe-price">£${h.price}/month</div>
                 <div class="swipe-desc">${esc(h.desc)}</div>
             </div>`;
@@ -873,10 +1198,13 @@ function animateOut(dir) {
     card.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
     card.style.transform  = `translateX(${x}px) rotate(${dir==='right'?30:-30}deg)`;
     card.style.opacity    = '0';
-    if (dir === 'right' && !S.liked.includes(hid)) {
-        S.liked.push(hid);
+    if (dir === 'right') {
+        recordLike(hid);
         save();
         toast('Added to liked houses ♥');
+    } else {
+        recordPass(hid);
+        save();
     }
     swipeIndex++;
     topCard = null;
@@ -886,13 +1214,33 @@ function animateOut(dir) {
 function detailCard() {
     const rem = swipeDeck.slice(swipeIndex);
     if (!rem.length) return;
-    const h = rem[0];
+    showDetail(rem[0]);
+}
+
+function showDetailById(id) {
+    const h = S.houses.find(x => x.id === id);
+    if (h) showDetail(h);
+}
+
+function showDetail(h) {
+    const imgs = (h.imgs && h.imgs.length) ? h.imgs : [IMGS[0]];
+    const tenancy = (h.tStart || h.tEnd)
+        ? `${formatDate(h.tStart) || '?'} → ${formatDate(h.tEnd) || '?'}`
+        : 'Flexible';
     document.getElementById('m-detail-body').innerHTML = `
-        <img src="${esc(h.img)}" alt="" style="width:100%;height:210px;object-fit:cover;border-radius:14px;margin-bottom:16px" onerror="this.src='${IMGS[0]}'">
-        <div style="font-size:19px;font-weight:800;margin-bottom:6px">${esc(h.addr)}</div>
-        <div style="font-size:24px;font-weight:900;color:var(--primary);margin-bottom:14px">£${h.price}/month</div>
-        <div class="tags">${(h.amen||[]).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}</div>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:4px">${esc(h.desc)}</p>
+        <div class="gallery">
+            ${imgs.map(src => `<img src="${esc(src)}" alt="" onerror="this.src='${IMGS[0]}'">`).join('')}
+        </div>
+        <div class="detail-title">${esc(h.addr)}</div>
+        <div class="detail-sub">${esc([h.city, h.postcode].filter(Boolean).join(' · '))}</div>
+        <div class="detail-price">£${h.price}/month${h.bills ? ' <span style="font-size:13px;font-weight:600;color:var(--green);vertical-align:middle">· Bills inc.</span>' : ''}</div>
+        <div class="kv-grid">
+            <div class="kv-item"><div class="kv-l">Type</div><div class="kv-v">${esc(TYPE_LABELS[h.type] || '—')}</div></div>
+            <div class="kv-item"><div class="kv-l">Bedrooms</div><div class="kv-v">${h.beds||1}</div></div>
+            <div class="kv-item" style="grid-column:span 2"><div class="kv-l">Tenancy</div><div class="kv-v">${esc(tenancy)}</div></div>
+        </div>
+        ${(h.amen||[]).length ? `<div class="tags">${(h.amen||[]).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}</div>` : ''}
+        <p class="detail-desc">${esc(h.desc)}</p>
         <div class="modal-row">
             <button class="btn btn-ghost" onclick="closeModal('m-detail')">Close</button>
             <button class="btn btn-primary" onclick="closeModal('m-detail');openContact('${h.id}')">Contact Landlord</button>
@@ -904,20 +1252,25 @@ function detailCard() {
    LIKED & STUDENT PROFILE
 ===================================================== */
 function renderLikedHTML() {
-    const houses = S.houses.filter(h => S.liked.includes(h.id));
+    const liked = myLikes();
+    const houses = S.houses.filter(h => liked.includes(h.id));
     let html = `<div class="content">
         <div class="section-title">Liked Houses${houses.length ? ' ('+houses.length+')' : ''}</div>`;
     if (!houses.length) {
         html += `<div class="empty"><div class="empty-icon">♥</div><h3>No liked houses yet</h3><p>Swipe right on properties you love!</p></div>`;
     } else {
         houses.forEach(h => {
+            const cover = (h.imgs && h.imgs[0]) || IMGS[0];
             html += `<div class="liked-item">
-                <img src="${esc(h.img)}" alt="" onerror="this.src='${IMGS[0]}'">
+                <img src="${esc(cover)}" alt="" onerror="this.src='${IMGS[0]}'">
                 <div class="liked-body">
                     <div class="liked-name">${esc(h.addr)}</div>
+                    <div class="liked-meta">${esc(h.city || '')} · ${esc(TYPE_LABELS[h.type] || '')} · ${h.beds||1} bed${h.beds===1?'':'s'}</div>
                     <div class="liked-price">£${h.price}/month</div>
-                    <div class="tags" style="margin-bottom:8px">${(h.amen||[]).slice(0,2).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}</div>
-                    <button class="btn btn-primary btn-sm" onclick="openContact('${h.id}')">Contact</button>
+                    <div style="display:flex;gap:6px">
+                        <button class="btn btn-outline btn-sm" onclick="showDetailById('${h.id}')">View</button>
+                        <button class="btn btn-primary btn-sm" onclick="openContact('${h.id}')">Contact</button>
+                    </div>
                 </div>
             </div>`;
         });
@@ -927,7 +1280,9 @@ function renderLikedHTML() {
 }
 
 function renderStudentProfileHTML() {
-    const toSee = Math.max(0, S.houses.length - S.liked.length);
+    const liked = myLikes();
+    const passed = myPasses();
+    const toSee = Math.max(0, S.houses.length - liked.length - passed.length);
     return `<div class="profile-hero">
         <div class="avatar">🎓</div>
         <div class="profile-name">${esc(S.user.name)}</div>
@@ -935,19 +1290,21 @@ function renderStudentProfileHTML() {
     </div>
     <div class="stats-row">
         <div class="stat"><div class="stat-n">${S.houses.length}</div><div class="stat-l">Available</div></div>
-        <div class="stat"><div class="stat-n">${S.liked.length}</div><div class="stat-l">Liked</div></div>
+        <div class="stat"><div class="stat-n">${liked.length}</div><div class="stat-l">Liked</div></div>
         <div class="stat"><div class="stat-n">${toSee}</div><div class="stat-l">To See</div></div>
     </div>
     <div class="content" style="padding-top:4px">
-        <button class="btn btn-ghost" onclick="clearLikes()">Reset Liked Houses</button>
+        <button class="btn btn-ghost" onclick="resetSwipes()">Reset Swipes</button>
         <button class="btn btn-danger" onclick="logout()">Sign Out</button>
     </div>`;
 }
 
-function clearLikes() {
-    S.liked = []; save();
+function resetSwipes() {
+    S.likes[uid()] = [];
+    S.passes[uid()] = [];
+    save();
     document.getElementById('s-body').innerHTML = renderStudentProfileHTML();
-    toast('Liked houses reset');
+    toast('Swipes reset');
 }
 
 /* =====================================================
@@ -977,10 +1334,18 @@ document.querySelectorAll('.overlay').forEach(o =>
 /* =====================================================
    UTILS
 ===================================================== */
-function v(id) { return document.getElementById(id).value.trim(); }
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 function esc(s) {
-    if (!s) return '';
+    if (s === null || s === undefined) return '';
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    return `${dd}/${mm}/${d.getFullYear()}`;
 }
 
 let toastTimer;
