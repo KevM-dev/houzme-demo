@@ -143,6 +143,84 @@
         .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
         .link-text { color: var(--primary); font-weight: 600; cursor: pointer; text-align: center; font-size: 14px; }
 
+        /* ---- LANDING ---- */
+        .landing-header {
+            background: var(--white);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .landing-hero {
+            background: linear-gradient(150deg, #4F46E5 0%, #6D28D9 65%, #059669 170%);
+            color: white;
+            padding: 44px 24px 36px;
+            text-align: center;
+        }
+        .landing-hero h1 { font-size: 40px; font-weight: 900; letter-spacing: -1px; }
+        .landing-hero h1 span { color: #6EE7B7; }
+        .landing-hero h2 { font-size: 22px; font-weight: 800; margin-top: 14px; line-height: 1.3; }
+        .landing-hero p { font-size: 14px; opacity: 0.85; margin-top: 10px; line-height: 1.5; }
+        .hero-ctas { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+        .hero-ctas .btn-white { background: white; color: var(--primary); }
+        .hero-ctas .btn-glass { background: rgba(255,255,255,0.14); color: white; border: 1.5px solid rgba(255,255,255,0.45); }
+        .hero-stats { display: flex; justify-content: center; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+        .hero-stat {
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 12px;
+            padding: 10px 16px;
+            min-width: 92px;
+        }
+        .hero-stat b { display: block; font-size: 19px; font-weight: 900; }
+        .hero-stat small { font-size: 11px; opacity: 0.8; }
+
+        .landing-section { padding: 26px 20px 8px; }
+        .landing-section > h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+        .landing-section > p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+        .landing-list { display: flex; flex-direction: column; gap: 16px; }
+        .prop-card.clickable { cursor: pointer; transition: transform 0.15s; }
+        .prop-card.clickable:active { transform: scale(0.98); }
+        .prop-badge {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(17,24,39,0.75); color: white;
+            padding: 5px 11px; border-radius: 100px;
+            font-size: 12px; font-weight: 700;
+            backdrop-filter: blur(4px);
+        }
+
+        .steps { display: flex; flex-direction: column; gap: 12px; }
+        .step {
+            background: white; border-radius: 14px; padding: 16px;
+            display: flex; align-items: center; gap: 14px;
+            box-shadow: var(--shadow);
+        }
+        .step-icon {
+            width: 46px; height: 46px; border-radius: 12px;
+            background: var(--primary-light);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .step b { font-size: 14px; display: block; margin-bottom: 2px; }
+        .step p { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+
+        .landing-cta {
+            margin: 26px 20px 30px;
+            background: var(--primary);
+            border-radius: 20px;
+            padding: 28px 22px;
+            text-align: center;
+            color: white;
+        }
+        .landing-cta h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+        .landing-cta p { font-size: 13px; opacity: 0.85; margin-bottom: 16px; }
+        .demo-links { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+        .demo-links .link-text { color: rgba(255,255,255,0.9); font-size: 13px; }
+
         /* ---- BUTTONS ---- */
         .btn {
             padding: 14px 20px;
@@ -388,9 +466,65 @@
 <div class="toast" id="toast"></div>
 
 <!-- ===================================================
+     SCREEN: Landing (public)
+=================================================== -->
+<div class="screen active" id="s-landing">
+    <div class="landing-header">
+        <span class="logo">Houz<span>ME</span></span>
+        <button class="btn btn-outline btn-sm" onclick="go('s-login')">Sign In</button>
+    </div>
+
+    <div class="landing-hero">
+        <h1>Houz<span>ME</span></h1>
+        <h2>Swipe your way to the perfect student home</h2>
+        <p>Browse real listings, like the places you love, and message landlords directly — all in one app.</p>
+        <div class="hero-stats" id="hero-stats"></div>
+        <div class="hero-ctas">
+            <button class="btn btn-white" onclick="go('s-signup')">Get Started — It's Free</button>
+            <button class="btn btn-glass" onclick="document.getElementById('landing-featured').scrollIntoView({behavior:'smooth'})">Browse Homes ↓</button>
+        </div>
+    </div>
+
+    <div class="landing-section" id="landing-featured">
+        <h3>Featured homes 🏠</h3>
+        <p>Tap any property to see photos, details and tenancy dates.</p>
+        <div class="landing-list" id="landing-list"></div>
+    </div>
+
+    <div class="landing-section">
+        <h3>How it works</h3>
+        <p>Finding your next student house takes three steps.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-icon">👆</div>
+                <div><b>1. Swipe</b><p>Browse homes near your uni. Swipe right on the ones you love, left on the ones you don't.</p></div>
+            </div>
+            <div class="step">
+                <div class="step-icon">♥</div>
+                <div><b>2. Like &amp; save</b><p>Every right-swipe is saved to your liked list so you can compare places later.</p></div>
+            </div>
+            <div class="step">
+                <div class="step-icon">💬</div>
+                <div><b>3. Contact</b><p>Message the landlord directly to arrange a viewing — no middlemen, no fees.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="landing-cta">
+        <h3>Ready to find your place?</h3>
+        <p>Create a free account as a student or list your property as a landlord.</p>
+        <button class="btn btn-white" style="background:white;color:var(--primary)" onclick="go('s-signup')">Create Free Account</button>
+        <div class="demo-links">
+            <p class="link-text" onclick="demoLogin('student')">🎓 Try the demo as a Student</p>
+            <p class="link-text" onclick="demoLogin('landlord')">🏠 Try the demo as a Landlord</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===================================================
      SCREEN: Login
 =================================================== -->
-<div class="screen active" id="s-login">
+<div class="screen" id="s-login">
     <div class="auth-wrap">
         <div class="auth-brand">
             <h1>Houz<span>ME</span></h1>
@@ -410,6 +544,7 @@
         <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
             <p class="link-text" onclick="demoLogin('landlord')">🏠 Demo — Sign in as Landlord</p>
             <p class="link-text" onclick="demoLogin('student')">🎓 Demo — Sign in as Student</p>
+            <p class="link-text" style="color:var(--muted)" onclick="showLanding()">← Back to browsing</p>
         </div>
     </div>
 </div>
@@ -452,6 +587,7 @@
         </div>
         <button class="btn btn-primary" onclick="signup()">Create Account</button>
         <p class="link-text" onclick="go('s-login')">Already have an account? Sign in</p>
+        <p class="link-text" style="color:var(--muted)" onclick="showLanding()">← Back to browsing</p>
     </div>
 </div>
 
@@ -643,6 +779,49 @@ function init() {
     load();
     if (!S.houses.length) seed();
     if (S.user) route();
+    else showLanding();
+}
+
+/* =====================================================
+   LANDING (public)
+===================================================== */
+function showLanding() {
+    renderLanding();
+    go('s-landing');
+    window.scrollTo(0, 0);
+}
+
+function renderLanding() {
+    const houses = S.houses;
+    const cities = [...new Set(houses.map(h => h.city).filter(Boolean))];
+    const minPrice = houses.length ? Math.min(...houses.map(h => h.price || Infinity)) : 0;
+
+    document.getElementById('hero-stats').innerHTML = `
+        <div class="hero-stat"><b>${houses.length}</b><small>Homes listed</small></div>
+        <div class="hero-stat"><b>${cities.length}</b><small>UK cities</small></div>
+        <div class="hero-stat"><b>£${minPrice}</b><small>From /month</small></div>`;
+
+    const list = document.getElementById('landing-list');
+    if (!houses.length) {
+        list.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><h3>No homes yet</h3><p>Check back soon — new listings are on the way.</p></div>`;
+        return;
+    }
+    list.innerHTML = houses.map(h => {
+        const cover = (h.imgs && h.imgs[0]) || IMGS[0];
+        return `<div class="prop-card clickable" onclick="showDetailById('${h.id}')" style="position:relative">
+            <img src="${esc(cover)}" alt="" onerror="this.src='${IMGS[0]}'">
+            <div class="prop-badge">£${h.price}/mo</div>
+            <div class="prop-body">
+                <div class="prop-name">${esc(h.addr)}</div>
+                <div class="prop-meta">${esc(h.city || '')} · ${esc(TYPE_LABELS[h.type] || '')} · ${h.beds||1} bed${h.beds===1?'':'s'}${h.bills?' · Bills inc.':''}</div>
+                <div class="tags">
+                    ${(h.amen||[]).slice(0,3).map(a=>`<span class="tag">${esc(a)}</span>`).join('')}
+                    ${h.imgs && h.imgs.length > 1 ? `<span class="tag tag-muted">${h.imgs.length} photos</span>` : ''}
+                </div>
+                <div class="prop-desc">${esc(h.desc)}</div>
+            </div>
+        </div>`;
+    }).join('');
 }
 
 function seed() {
@@ -765,7 +944,7 @@ function go(id) {
 }
 
 function route() {
-    if (!S.user) { go('s-login'); return; }
+    if (!S.user) { showLanding(); return; }
     if (S.user.role === 'landlord') {
         go('s-landlord');
         document.getElementById('l-greet').textContent = 'Hi, ' + firstName();
@@ -818,7 +997,7 @@ function signup() {
 function logout() {
     S.user = null; save();
     swipeIndex = 0;
-    go('s-login');
+    showLanding();
 }
 
 /* =====================================================
@@ -1243,7 +1422,9 @@ function showDetail(h) {
         <p class="detail-desc">${esc(h.desc)}</p>
         <div class="modal-row">
             <button class="btn btn-ghost" onclick="closeModal('m-detail')">Close</button>
-            <button class="btn btn-primary" onclick="closeModal('m-detail');openContact('${h.id}')">Contact Landlord</button>
+            ${S.user
+                ? `<button class="btn btn-primary" onclick="closeModal('m-detail');openContact('${h.id}')">Contact Landlord</button>`
+                : `<button class="btn btn-primary" onclick="closeModal('m-detail');go('s-signup');toast('Create a free account to contact landlords')">Sign Up to Contact</button>`}
         </div>`;
     openModal('m-detail');
 }
@@ -1311,6 +1492,7 @@ function resetSwipes() {
    CONTACT
 ===================================================== */
 function openContact(hid) {
+    if (!S.user) { go('s-signup'); toast('Create a free account to contact landlords'); return; }
     document.getElementById('m-contact').dataset.hid = hid;
     document.getElementById('m-msg').value = '';
     openModal('m-contact');
